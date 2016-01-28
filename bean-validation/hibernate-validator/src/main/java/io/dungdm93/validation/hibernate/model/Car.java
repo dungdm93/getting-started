@@ -2,6 +2,7 @@ package io.dungdm93.validation.hibernate.model;
 
 import io.dungdm93.validation.hibernate.constant.FuelConsumption;
 import io.dungdm93.validation.hibernate.validator.MaxAllowedFuelConsumption;
+import io.dungdm93.validation.hibernate.validator.MinTowingCapacity;
 import io.dungdm93.validation.hibernate.validator.ValidPart;
 
 import javax.validation.Valid;
@@ -12,6 +13,7 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Optional;
 
 public class Car {
     @NotNull
@@ -30,6 +32,8 @@ public class Car {
     @Valid
     private EnumMap<FuelConsumption, @MaxAllowedFuelConsumption Integer> fuelConsumption
             = new EnumMap<>(FuelConsumption.class);
+
+    private Optional<@MinTowingCapacity(1000) Integer> towingCapacity = Optional.empty();
 
     private boolean isRegistered = true;
 
@@ -57,5 +61,9 @@ public class Car {
 
     public void setFuelConsumption(FuelConsumption consumption, int value) {
         fuelConsumption.put(consumption, value);
+    }
+
+    public void setTowingCapacity(Integer alias) {
+        towingCapacity = Optional.of(alias);
     }
 }

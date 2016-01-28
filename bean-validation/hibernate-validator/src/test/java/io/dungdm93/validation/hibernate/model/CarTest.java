@@ -108,4 +108,16 @@ public class CarTest {
         assertEquals(1, constraintViolations.size());
         assertEquals("20 is outside the max fuel consumption.", constraintViolations.iterator().next().getMessage());
     }
+
+    @Test
+    public void invalidTowingCapacity() {
+        Car car = new Car("Morris", "DD-AB-123", 2);
+        car.setTowingCapacity(100);
+
+        Set<ConstraintViolation<Car>> constraintViolations = validator.validate(car);
+
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Not enough towing capacity.", constraintViolations.iterator().next().getMessage());
+        assertEquals("towingCapacity", constraintViolations.iterator().next().getPropertyPath().toString());
+    }
 }
