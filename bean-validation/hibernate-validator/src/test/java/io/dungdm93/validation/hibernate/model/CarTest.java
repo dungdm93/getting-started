@@ -24,7 +24,6 @@ public class CarTest {
     @Test
     public void manufacturerIsNull() {
         Car car = new Car(null, "DD-AB-123", 4);
-        car.setRegistered(true);
 
         Set<ConstraintViolation<Car>> constraintViolations =
                 validator.validate(car);
@@ -36,7 +35,6 @@ public class CarTest {
     @Test
     public void licensePlateTooShort() {
         Car car = new Car("Morris", "D", 4);
-        car.setRegistered(true);
 
         Set<ConstraintViolation<Car>> constraintViolations =
                 validator.validate(car);
@@ -50,7 +48,6 @@ public class CarTest {
     @Test
     public void seatCountTooLow() {
         Car car = new Car("Morris", "DD-AB-123", 1);
-        car.setRegistered(true);
 
         Set<ConstraintViolation<Car>> constraintViolations =
                 validator.validate(car);
@@ -78,11 +75,25 @@ public class CarTest {
     @Test
     public void carIsValid() {
         Car car = new Car("Morris", "DD-AB-123", 2);
-        car.setRegistered(true);
 
         Set<ConstraintViolation<Car>> constraintViolations =
                 validator.validate(car);
 
         assertEquals(0, constraintViolations.size());
+    }
+
+    @Test
+    public void carHasInvalidPart() {
+        Car car = new Car("Morris", "DD-AB-123", 2);
+        car.addPart("Wheel");
+        car.addPart(null);
+
+        Set<ConstraintViolation<Car>> constraintViolations = validator.validate(car);
+
+        assertEquals(1, constraintViolations.size());
+        assertEquals("'null' is not a valid car part.",
+                constraintViolations.iterator().next().getMessage()
+        );
+        assertEquals("parts[1]", constraintViolations.iterator().next().getPropertyPath().toString());
     }
 }
