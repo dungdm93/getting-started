@@ -12,4 +12,33 @@
     <artifactId>bean-validation</artifactId>
     <packaging>pom</packaging>
     <name>Bean Validation</name>
+
+    <properties>
+        <postgresql-jdbc.version>9.4-1206-jdbc42</postgresql-jdbc.version>
+        <hibernate-entitymanager.version>5.0.0.Final</hibernate-entitymanager.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql-jdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate-entitymanager.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>
