@@ -1,5 +1,7 @@
 package io.dungdm93.validation.hibernate.model;
 
+import io.dungdm93.validation.hibernate.constant.FuelConsumption;
+import io.dungdm93.validation.hibernate.validator.MaxAllowedFuelConsumption;
 import io.dungdm93.validation.hibernate.validator.ValidPart;
 
 import javax.validation.Valid;
@@ -8,6 +10,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 
 public class Car {
@@ -23,6 +26,10 @@ public class Car {
 
     @Valid
     List<@ValidPart String> parts = new ArrayList<>();
+
+    @Valid
+    private EnumMap<FuelConsumption, @MaxAllowedFuelConsumption Integer> fuelConsumption
+            = new EnumMap<>(FuelConsumption.class);
 
     private boolean isRegistered = true;
 
@@ -46,5 +53,9 @@ public class Car {
 
     public void addPart(String part) {
         parts.add(part);
+    }
+
+    public void setFuelConsumption(FuelConsumption consumption, int value) {
+        fuelConsumption.put(consumption, value);
     }
 }

@@ -1,5 +1,6 @@
 package io.dungdm93.validation.hibernate.model;
 
+import io.dungdm93.validation.hibernate.constant.FuelConsumption;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -95,5 +96,16 @@ public class CarTest {
                 constraintViolations.iterator().next().getMessage()
         );
         assertEquals("parts[1]", constraintViolations.iterator().next().getPropertyPath().toString());
+    }
+
+    @Test
+    public void carHasInvalidFuelConsumption() {
+        Car car = new Car("Morris", "DD-AB-123", 2);
+        car.setFuelConsumption(FuelConsumption.HIGHWAY, 20);
+
+        Set<ConstraintViolation<Car>> constraintViolations = validator.validate(car);
+
+        assertEquals(1, constraintViolations.size());
+        assertEquals("20 is outside the max fuel consumption.", constraintViolations.iterator().next().getMessage());
     }
 }
