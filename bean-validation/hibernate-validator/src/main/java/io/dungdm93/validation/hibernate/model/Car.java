@@ -2,6 +2,7 @@ package io.dungdm93.validation.hibernate.model;
 
 import io.dungdm93.validation.hibernate.constant.FuelConsumption;
 import io.dungdm93.validation.hibernate.validator.MaxAllowedFuelConsumption;
+import io.dungdm93.validation.hibernate.validator.MinTorque;
 import io.dungdm93.validation.hibernate.validator.MinTowingCapacity;
 import io.dungdm93.validation.hibernate.validator.ValidPart;
 
@@ -37,6 +38,8 @@ public class Car {
 
     private boolean isRegistered = true;
 
+    private GearBox<@MinTorque(100) Gear> gearBox;
+
     public Car() {
     }
 
@@ -65,5 +68,9 @@ public class Car {
 
     public void setTowingCapacity(Integer alias) {
         towingCapacity = Optional.of(alias);
+    }
+
+    public void setGearBox(GearBox<Gear> gearBox) {
+        this.gearBox = gearBox;
     }
 }

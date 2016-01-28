@@ -1,6 +1,8 @@
 package io.dungdm93.validation.hibernate.model;
 
 import io.dungdm93.validation.hibernate.constant.FuelConsumption;
+import io.dungdm93.validation.hibernate.validator.GearBoxUnwrapper;
+import org.hibernate.validator.HibernateValidator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -18,7 +20,10 @@ public class CarTest {
 
     @BeforeClass
     public static void setUpValidator() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        ValidatorFactory factory = Validation.byProvider(HibernateValidator.class)
+                .configure()
+                .addValidatedValueHandler(new GearBoxUnwrapper())
+                .buildValidatorFactory();
         validator = factory.getValidator();
     }
 
@@ -119,5 +124,16 @@ public class CarTest {
         assertEquals(1, constraintViolations.size());
         assertEquals("Not enough towing capacity.", constraintViolations.iterator().next().getMessage());
         assertEquals("towingCapacity", constraintViolations.iterator().next().getPropertyPath().toString());
+    }
+
+    @Test
+    public void invalidGearBox() {
+        Car car = new Car("Morris", "DD-AB-123", 2);
+        car.setGearBox(new GearBox<>(new Gear.AcmeGear()));
+
+        Set<ConstraintViolation<Car>> constraintViolations = validator.validate(car);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Gear is not providing enough torque.", constraintViolations.iterator().next().getMessage());
+        assertEquals("gearBox", constraintViolations.iterator().next().getPropertyPath().toString());
     }
 }
