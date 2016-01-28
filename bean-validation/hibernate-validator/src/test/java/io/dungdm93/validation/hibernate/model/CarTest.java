@@ -24,6 +24,7 @@ public class CarTest {
     @Test
     public void manufacturerIsNull() {
         Car car = new Car(null, "DD-AB-123", 4);
+        car.setRegistered(true);
 
         Set<ConstraintViolation<Car>> constraintViolations =
                 validator.validate(car);
@@ -35,13 +36,13 @@ public class CarTest {
     @Test
     public void licensePlateTooShort() {
         Car car = new Car("Morris", "D", 4);
+        car.setRegistered(true);
 
         Set<ConstraintViolation<Car>> constraintViolations =
                 validator.validate(car);
 
         assertEquals(1, constraintViolations.size());
-        assertEquals(
-                "size must be between 2 and 14",
+        assertEquals("size must be between 2 and 14",
                 constraintViolations.iterator().next().getMessage()
         );
     }
@@ -49,13 +50,27 @@ public class CarTest {
     @Test
     public void seatCountTooLow() {
         Car car = new Car("Morris", "DD-AB-123", 1);
+        car.setRegistered(true);
 
         Set<ConstraintViolation<Car>> constraintViolations =
                 validator.validate(car);
 
         assertEquals(1, constraintViolations.size());
-        assertEquals(
-                "must be greater than or equal to 2",
+        assertEquals("must be greater than or equal to 2",
+                constraintViolations.iterator().next().getMessage()
+        );
+    }
+
+    @Test
+    public void carIsNotRegistered() {
+        Car car = new Car("Morris", "DD-AB-123", 2);
+        car.setRegistered(false);
+
+        Set<ConstraintViolation<Car>> constraintViolations =
+                validator.validate(car);
+
+        assertEquals(1, constraintViolations.size());
+        assertEquals("must be true",
                 constraintViolations.iterator().next().getMessage()
         );
     }
@@ -63,6 +78,7 @@ public class CarTest {
     @Test
     public void carIsValid() {
         Car car = new Car("Morris", "DD-AB-123", 2);
+        car.setRegistered(true);
 
         Set<ConstraintViolation<Car>> constraintViolations =
                 validator.validate(car);
