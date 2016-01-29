@@ -10,9 +10,10 @@ import static org.junit.Assert.assertEquals;
 public class RentalCarTest extends CarTest {
     @Override
     public void setUp() {
-        RentalCar rentalCar = new RentalCar("Morris", "DD-AB-123", 2);
+        RentalCar rentalCar = new RentalCar();
         rentalCar.rentalStation = "Hanoi";
         this.car = rentalCar;
+        super.setUp();
     }
 
     @Override

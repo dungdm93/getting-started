@@ -8,27 +8,27 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.ElementType.TYPE_USE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Documented
-@Constraint(validatedBy = {ValidPart.ValidPartValidator.class})
-@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
+@Constraint(validatedBy = {NotNullElement.NotNullElementValidator.class})
+@Target(TYPE_USE)
 @Retention(RUNTIME)
-public @interface ValidPart {
-    String message() default "{io.dungdm93.validation.hibernate.validator.ValidPart.message}";
+public @interface NotNullElement {
+    String message() default "{io.dungdm93.validation.hibernate.validator.NotNullElement.message}";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 
-    class ValidPartValidator implements ConstraintValidator<ValidPart, String> {
+    class NotNullElementValidator implements ConstraintValidator<NotNullElement, Object> {
         @Override
-        public void initialize(ValidPart annotation) {
+        public void initialize(NotNullElement annotation) {
         }
 
         @Override
-        public boolean isValid(String value, ConstraintValidatorContext context) {
+        public boolean isValid(Object value, ConstraintValidatorContext context) {
             return value != null;
         }
     }

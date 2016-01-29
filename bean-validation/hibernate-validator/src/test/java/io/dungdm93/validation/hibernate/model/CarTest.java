@@ -11,6 +11,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -31,7 +33,11 @@ public class CarTest {
 
     @Before
     public void setUp() {
-        car = new Car("Morris", "DD-AB-123", 2);
+        if (Objects.isNull(car)) car = new Car();
+        car.manufacturer = "Morris";
+        car.licensePlate = "DD-AB-123";
+        car.seatCount = 2;
+        car.driver = new Person("Jason Statham");
     }
 
     public Car car() {
@@ -104,7 +110,7 @@ public class CarTest {
         Set<ConstraintViolation<Car>> constraintViolations = validator.validate(car);
 
         assertEquals(1, constraintViolations.size());
-        assertEquals("'null' is not a valid car part.",
+        assertEquals("'null' is not a valid element of collection.",
                 constraintViolations.iterator().next().getMessage()
         );
         assertEquals("parts[1]", constraintViolations.iterator().next().getPropertyPath().toString());
@@ -136,6 +142,7 @@ public class CarTest {
         car().setGearBox(new GearBox<>(new Gear.AcmeGear()));
 
         Set<ConstraintViolation<Car>> constraintViolations = validator.validate(car);
+
         assertEquals(1, constraintViolations.size());
         assertEquals("Gear is not providing enough torque.", constraintViolations.iterator().next().getMessage());
         assertEquals("gearBox", constraintViolations.iterator().next().getPropertyPath().toString());
@@ -143,14 +150,33 @@ public class CarTest {
 
     @Test
     public void tooMuchPassengers() {
-        car().addPassenger(new Person());
-        car().addPassenger(new Person());
-        car().addPassenger(new Person());
-        car().addPassenger(new Person());
-        car().addPassenger(new Person());
+        car().addPassenger(new Person("A"));
+        car().addPassenger(new Person("B"));
+        car().addPassenger(new Person("C"));
+        car().addPassenger(new Person("D"));
+        car().addPassenger(new Person("E"));
 
         Set<ConstraintViolation<Car>> constraintViolations = validator.validate(car);
+
         assertEquals(1, constraintViolations.size());
         assertEquals("Too much passenger in your car.", constraintViolations.iterator().next().getMessage());
+    }
+
+    @Test
+    public void hasInvalidPassengers() {
+        car().addPassenger(new Person()); // null name
+        car().addPassenger(null);
+
+        Set<ConstraintViolation<Car>> constraintViolations = validator.validate(car);
+
+        assertEquals(2, constraintViolations.size());
+        Iterator<ConstraintViolation<Car>> it = constraintViolations.iterator();
+
+        ConstraintViolation<Car> first = it.next();
+        assertEquals("may not be null", first.getMessage());
+        assertEquals("passengers[0].name", first.getPropertyPath().toString());
+
+        ConstraintViolation<Car> second = it.next();
+        assertEquals("'null' is not a valid element of collection.", second.getMessage());
     }
 }

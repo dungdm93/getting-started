@@ -25,8 +25,13 @@ public class Car {
     @Min(2)
     public int seatCount;
     @Valid
-    List<@ValidPart String> parts = new ArrayList<>();
-    private List<Person> passengers = new ArrayList<>();
+    @NotNull
+    public Person driver;
+    @Valid
+    List<@NotNullElement String> parts = new ArrayList<>();
+    @Valid
+    @NotNull
+    private List<@NotNullElement Person> passengers = new ArrayList<>();
     @Valid
     private EnumMap<FuelConsumption, @MaxAllowedFuelConsumption Integer> fuelConsumption
             = new EnumMap<>(FuelConsumption.class);
@@ -37,15 +42,7 @@ public class Car {
 
     private GearBox<@MinTorque(100) Gear> gearBox;
 
-    public Car() {
-    }
-
-    public Car(String manufacturer, String licencePlate, int seatCount) {
-        this.manufacturer = manufacturer;
-        this.licensePlate = licencePlate;
-        this.seatCount = seatCount;
-    }
-
+    //========== SETTERS, GETTERS, ADDERS  ==========
     @AssertTrue
     public boolean isRegistered() {
         return isRegistered;
