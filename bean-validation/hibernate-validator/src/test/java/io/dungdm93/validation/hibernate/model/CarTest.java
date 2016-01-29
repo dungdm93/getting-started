@@ -136,4 +136,18 @@ public class CarTest {
         assertEquals("Gear is not providing enough torque.", constraintViolations.iterator().next().getMessage());
         assertEquals("gearBox", constraintViolations.iterator().next().getPropertyPath().toString());
     }
+
+    @Test
+    public void tooMuchPassengers() {
+        Car car = new Car("Morris", "DD-AB-123", 2);
+        car.addPassenger(new Person());
+        car.addPassenger(new Person());
+        car.addPassenger(new Person());
+        car.addPassenger(new Person());
+        car.addPassenger(new Person());
+
+        Set<ConstraintViolation<Car>> constraintViolations = validator.validate(car);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Too much passenger in your car.", constraintViolations.iterator().next().getMessage());
+    }
 }

@@ -1,10 +1,7 @@
 package io.dungdm93.validation.hibernate.model;
 
 import io.dungdm93.validation.hibernate.constant.FuelConsumption;
-import io.dungdm93.validation.hibernate.validator.MaxAllowedFuelConsumption;
-import io.dungdm93.validation.hibernate.validator.MinTorque;
-import io.dungdm93.validation.hibernate.validator.MinTowingCapacity;
-import io.dungdm93.validation.hibernate.validator.ValidPart;
+import io.dungdm93.validation.hibernate.validator.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.AssertTrue;
@@ -16,6 +13,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Optional;
 
+@ValidPassengerCount
 public class Car {
     @NotNull
     public String manufacturer;
@@ -26,10 +24,9 @@ public class Car {
 
     @Min(2)
     public int seatCount;
-
     @Valid
     List<@ValidPart String> parts = new ArrayList<>();
-
+    private List<Person> passengers = new ArrayList<>();
     @Valid
     private EnumMap<FuelConsumption, @MaxAllowedFuelConsumption Integer> fuelConsumption
             = new EnumMap<>(FuelConsumption.class);
@@ -72,5 +69,17 @@ public class Car {
 
     public void setGearBox(GearBox<Gear> gearBox) {
         this.gearBox = gearBox;
+    }
+
+    public void addPassenger(Person passenger) {
+        passengers.add(passenger);
+    }
+
+    public List<Person> getPassengers() {
+        return passengers;
+    }
+
+    public Person getPassenger(int index) {
+        return passengers.get(index);
     }
 }
