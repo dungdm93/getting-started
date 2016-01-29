@@ -3,6 +3,7 @@ package io.dungdm93.validation.hibernate.model;
 import io.dungdm93.validation.hibernate.constant.FuelConsumption;
 import io.dungdm93.validation.hibernate.validator.GearBoxUnwrapper;
 import org.hibernate.validator.HibernateValidator;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -16,7 +17,8 @@ import static org.junit.Assert.assertEquals;
 
 public class CarTest {
 
-    private static Validator validator;
+    protected static Validator validator;
+    protected Car car;
 
     @BeforeClass
     public static void setUpValidator() {
@@ -27,9 +29,18 @@ public class CarTest {
         validator = factory.getValidator();
     }
 
+    @Before
+    public void setUp() {
+        car = new Car("Morris", "DD-AB-123", 2);
+    }
+
+    public Car car() {
+        return car;
+    }
+
     @Test
     public void manufacturerIsNull() {
-        Car car = new Car(null, "DD-AB-123", 4);
+        car().manufacturer = null;
 
         Set<ConstraintViolation<Car>> constraintViolations =
                 validator.validate(car);
@@ -40,7 +51,7 @@ public class CarTest {
 
     @Test
     public void licensePlateTooShort() {
-        Car car = new Car("Morris", "D", 4);
+        car().licensePlate = "D";
 
         Set<ConstraintViolation<Car>> constraintViolations =
                 validator.validate(car);
@@ -53,7 +64,7 @@ public class CarTest {
 
     @Test
     public void seatCountTooLow() {
-        Car car = new Car("Morris", "DD-AB-123", 1);
+        car().seatCount = 1;
 
         Set<ConstraintViolation<Car>> constraintViolations =
                 validator.validate(car);
@@ -66,8 +77,7 @@ public class CarTest {
 
     @Test
     public void carIsNotRegistered() {
-        Car car = new Car("Morris", "DD-AB-123", 2);
-        car.setRegistered(false);
+        car().setRegistered(false);
 
         Set<ConstraintViolation<Car>> constraintViolations =
                 validator.validate(car);
@@ -80,8 +90,6 @@ public class CarTest {
 
     @Test
     public void carIsValid() {
-        Car car = new Car("Morris", "DD-AB-123", 2);
-
         Set<ConstraintViolation<Car>> constraintViolations =
                 validator.validate(car);
 
@@ -90,9 +98,8 @@ public class CarTest {
 
     @Test
     public void carHasInvalidPart() {
-        Car car = new Car("Morris", "DD-AB-123", 2);
-        car.addPart("Wheel");
-        car.addPart(null);
+        car().addPart("Wheel");
+        car().addPart(null);
 
         Set<ConstraintViolation<Car>> constraintViolations = validator.validate(car);
 
@@ -105,8 +112,7 @@ public class CarTest {
 
     @Test
     public void carHasInvalidFuelConsumption() {
-        Car car = new Car("Morris", "DD-AB-123", 2);
-        car.setFuelConsumption(FuelConsumption.HIGHWAY, 20);
+        car().setFuelConsumption(FuelConsumption.HIGHWAY, 20);
 
         Set<ConstraintViolation<Car>> constraintViolations = validator.validate(car);
 
@@ -116,8 +122,7 @@ public class CarTest {
 
     @Test
     public void invalidTowingCapacity() {
-        Car car = new Car("Morris", "DD-AB-123", 2);
-        car.setTowingCapacity(100);
+        car().setTowingCapacity(100);
 
         Set<ConstraintViolation<Car>> constraintViolations = validator.validate(car);
 
@@ -128,8 +133,7 @@ public class CarTest {
 
     @Test
     public void invalidGearBox() {
-        Car car = new Car("Morris", "DD-AB-123", 2);
-        car.setGearBox(new GearBox<>(new Gear.AcmeGear()));
+        car().setGearBox(new GearBox<>(new Gear.AcmeGear()));
 
         Set<ConstraintViolation<Car>> constraintViolations = validator.validate(car);
         assertEquals(1, constraintViolations.size());
@@ -139,12 +143,11 @@ public class CarTest {
 
     @Test
     public void tooMuchPassengers() {
-        Car car = new Car("Morris", "DD-AB-123", 2);
-        car.addPassenger(new Person());
-        car.addPassenger(new Person());
-        car.addPassenger(new Person());
-        car.addPassenger(new Person());
-        car.addPassenger(new Person());
+        car().addPassenger(new Person());
+        car().addPassenger(new Person());
+        car().addPassenger(new Person());
+        car().addPassenger(new Person());
+        car().addPassenger(new Person());
 
         Set<ConstraintViolation<Car>> constraintViolations = validator.validate(car);
         assertEquals(1, constraintViolations.size());
