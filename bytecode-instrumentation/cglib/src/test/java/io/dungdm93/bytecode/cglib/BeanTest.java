@@ -2,6 +2,7 @@ package io.dungdm93.bytecode.cglib;
 
 import net.sf.cglib.beans.BeanCopier;
 import net.sf.cglib.beans.BeanGenerator;
+import net.sf.cglib.beans.BulkBean;
 import net.sf.cglib.beans.ImmutableBean;
 import org.junit.Test;
 
@@ -49,5 +50,19 @@ public class BeanTest {
         copier.copy(bean, seed, null);
 
         assertEquals("Hello cglib!", seed.getValue());
+    }
+
+    @Test
+    public void bulkBean() throws Exception {
+        BulkBean bulkBean = BulkBean.create(Bean.class,
+                new String[]{"getValue"},
+                new String[]{"setValue"},
+                new Class[]{String.class});
+        Bean bean = new Bean();
+        bean.setValue("Hello world!");
+        assertEquals(1, bulkBean.getPropertyValues(bean).length);
+        assertEquals("Hello world!", bulkBean.getPropertyValues(bean)[0]);
+        bulkBean.setPropertyValues(bean, new Object[]{"Hello cglib!"});
+        assertEquals("Hello cglib!", bean.getValue());
     }
 }
