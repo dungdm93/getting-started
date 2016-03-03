@@ -1,9 +1,6 @@
 package io.dungdm93.bytecode.cglib;
 
-import net.sf.cglib.beans.BeanCopier;
-import net.sf.cglib.beans.BeanGenerator;
-import net.sf.cglib.beans.BulkBean;
-import net.sf.cglib.beans.ImmutableBean;
+import net.sf.cglib.beans.*;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -64,5 +61,24 @@ public class BeanTest {
         assertEquals("Hello world!", bulkBean.getPropertyValues(bean)[0]);
         bulkBean.setPropertyValues(bean, new Object[]{"Hello cglib!"});
         assertEquals("Hello cglib!", bean.getValue());
+    }
+
+    @Test
+    public void beanMap() throws Exception {
+        Bean bean = new Bean();
+        BeanMap map = BeanMap.create(bean);
+
+        bean.setValue("Hello world!");
+        assertEquals("Hello world!", map.get("value"));
+
+        bean.setValue("Hello cglib!");
+        assertEquals("Hello cglib!", map.get("value"));
+
+        map.put("value", "Goodbye cglib!");
+        assertEquals("Goodbye cglib!", bean.getValue());
+        System.out.println(bean.getValue());
+
+        map.put("attribute", "fake one");
+        System.out.println(map.get("attribute"));
     }
 }
