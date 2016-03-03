@@ -66,4 +66,27 @@ public class FoobarTest {
         assertNotEquals("Hello cglib!", proxy.toString());
         System.out.println(proxy.hashCode()); // Does not throw an exception or result in an endless loop.
     }
+
+    @Test
+    public void lazyLoad() throws Exception {
+        LazyLoadContainer c = new LazyLoadContainer();
+        System.out.println("Create container done");
+        System.out.println(c.foobar.doStaff());
+    }
+
+    static class LazyLoadContainer {
+        Foobar foobar;
+
+        LazyLoadContainer() {
+            // System.out.println("Start eager load!");
+            // foobar = new Foobar();
+            foobar = (Foobar) Enhancer.create(Foobar.class, new LazyLoader() {
+                @Override
+                public Object loadObject() throws Exception {
+                    System.out.println("Start lazy loaded!");
+                    return new Foobar();
+                }
+            });
+        }
+    }
 }
