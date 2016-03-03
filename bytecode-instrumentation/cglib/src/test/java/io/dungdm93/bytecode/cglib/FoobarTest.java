@@ -1,8 +1,6 @@
 package io.dungdm93.bytecode.cglib;
 
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.FixedValue;
-import net.sf.cglib.proxy.InvocationHandler;
+import net.sf.cglib.proxy.*;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -46,5 +44,26 @@ public class FoobarTest {
         Foobar proxy = (Foobar) enhancer.create();
         assertEquals("Hello cglib!", proxy.doStaff());
         assertNotEquals("Hello cglib!", proxy.toString());
+    }
+
+    @Test
+    public void methodInterceptor() throws Exception {
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(Foobar.class);
+        enhancer.setCallback(new MethodInterceptor() {
+            @Override
+            public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy)
+                    throws Throwable {
+                if (!method.getDeclaringClass().equals(Object.class) && method.getReturnType().equals(String.class)) {
+                    return "Hello cglib!";
+                } else {
+                    return proxy.invokeSuper(obj, args);
+                }
+            }
+        });
+        Foobar proxy = (Foobar) enhancer.create();
+        assertEquals("Hello cglib!", proxy.doStaff());
+        assertNotEquals("Hello cglib!", proxy.toString());
+        System.out.println(proxy.hashCode()); // Does not throw an exception or result in an endless loop.
     }
 }
