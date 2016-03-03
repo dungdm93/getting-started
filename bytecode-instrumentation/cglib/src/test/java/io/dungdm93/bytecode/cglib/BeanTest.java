@@ -1,5 +1,6 @@
 package io.dungdm93.bytecode.cglib;
 
+import net.sf.cglib.beans.BeanCopier;
 import net.sf.cglib.beans.BeanGenerator;
 import net.sf.cglib.beans.ImmutableBean;
 import org.junit.Test;
@@ -35,5 +36,18 @@ public class BeanTest {
         setter.invoke(bean, "Hello cglib!");
         Method getter = bean.getClass().getMethod("getValue");
         assertEquals("Hello cglib!", getter.invoke(bean));
+    }
+
+    @Test
+    public void beanCopier() throws Exception {
+        BeanCopier copier = BeanCopier.create(Bean.class, Seed.class, false);
+
+        Bean bean = new Bean();
+        bean.setValue("Hello cglib!");
+
+        Seed seed = new Seed();
+        copier.copy(bean, seed, null);
+
+        assertEquals("Hello cglib!", seed.getValue());
     }
 }
