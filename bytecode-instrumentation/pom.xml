@@ -13,6 +13,10 @@
     <packaging>pom</packaging>
     <name>Bytecode Instrumentation</name>
 
+    <modules>
+        <module>cglib</module>
+    </modules>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
