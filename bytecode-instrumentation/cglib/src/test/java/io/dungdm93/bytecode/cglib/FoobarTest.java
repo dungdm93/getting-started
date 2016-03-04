@@ -92,6 +92,18 @@ public class FoobarTest {
         System.out.println(c);
     }
 
+    @Test
+    public void noOp() throws Exception {
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(Foobar.class);
+        enhancer.setCallback(NoOp.INSTANCE);
+
+        Foobar foobar = (Foobar) enhancer.create();
+        System.out.println(foobar.doStaff());
+        System.out.println(foobar.toString());
+        System.out.println(foobar.hashCode());
+    }
+
     static class LazyLoadContainer {
         Foobar foobar;
 
