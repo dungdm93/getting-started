@@ -3,6 +3,7 @@ package io.dungdm93.bytecode.cglib;
 import io.dungdm93.bytecode.cglib.mixin.*;
 import net.sf.cglib.core.KeyFactory;
 import net.sf.cglib.proxy.Mixin;
+import net.sf.cglib.util.StringSwitcher;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -28,5 +29,16 @@ public class MixinTest {
                 new Object[]{new White(), new Square()});
         assertEquals("White", mixin.color());
         assertEquals(4, mixin.sides());
+    }
+
+    @Test
+    public void stringSwitcher() throws Exception {
+        String[] strings = new String[]{"one", "two"};
+        int[] values = new int[]{1, 2};
+        StringSwitcher stringSwitcher = StringSwitcher.create(strings, values, true);
+
+        assertEquals(1, stringSwitcher.intValue("one"));
+        assertEquals(2, stringSwitcher.intValue("two"));
+        assertEquals(-1, stringSwitcher.intValue("three"));
     }
 }
