@@ -104,6 +104,36 @@ public class FoobarTest {
         System.out.println(foobar.hashCode());
     }
 
+    @Test
+    public void callbackFilter() throws Exception {
+        CallbackHelper callbackHelper = new CallbackHelper(Foobar.class, new Class[0]) {
+            @Override
+            protected Object getCallback(Method method) {
+                if (!method.getDeclaringClass().equals(Object.class)
+                        && method.getReturnType().equals(String.class)) {
+                    return new FixedValue() {
+                        @Override
+                        public Object loadObject() throws Exception {
+                            return "Hello cglib!";
+                        }
+                    };
+                } else {
+                    return NoOp.INSTANCE; // A singleton provided by NoOp.
+                }
+            }
+        };
+
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(Foobar.class);
+        enhancer.setCallbackFilter(callbackHelper);
+        enhancer.setCallbacks(callbackHelper.getCallbacks());
+
+        Foobar proxy = (Foobar) enhancer.create();
+        assertEquals("Hello cglib!", proxy.doStaff());
+        assertNotEquals("Hello cglib!", proxy.toString());
+        System.out.println(proxy.hashCode()); // Does not throw an exception or result in an endless loop.
+    }
+
     static class LazyLoadContainer {
         Foobar foobar;
 
