@@ -72,6 +72,15 @@ public class FoobarTest {
         LazyLoadContainer c = new LazyLoadContainer();
         System.out.println("Create container done");
         System.out.println(c.foobar.doStaff());
+        // System.out.println(c.foobar); // print "Start lazy loaded!" only once
+    }
+
+    @Test
+    public void dispatcher() throws Exception {
+        DispatcherContainer c = new DispatcherContainer();
+        System.out.println("Create container done");
+        System.out.println(c.foobar.doStaff());
+        System.out.println(c.foobar);
     }
 
     static class LazyLoadContainer {
@@ -84,6 +93,20 @@ public class FoobarTest {
                 @Override
                 public Object loadObject() throws Exception {
                     System.out.println("Start lazy loaded!");
+                    return new Foobar();
+                }
+            });
+        }
+    }
+
+    static class DispatcherContainer {
+        Foobar foobar;
+
+        DispatcherContainer() {
+            foobar = (Foobar) Enhancer.create(Foobar.class, new Dispatcher() {
+                @Override
+                public Object loadObject() throws Exception {
+                    System.out.println("Start dispatcher!");
                     return new Foobar();
                 }
             });
