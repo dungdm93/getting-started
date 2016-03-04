@@ -83,6 +83,15 @@ public class FoobarTest {
         System.out.println(c.foobar);
     }
 
+    @Test
+    public void proxyRefDispatcher() throws Exception {
+        ProxyRefDispatcherContainer c = new ProxyRefDispatcherContainer();
+        System.out.println("Create container done");
+        System.out.println(c.foobar.doStaff());
+        System.out.println(c.foobar);
+        System.out.println(c);
+    }
+
     static class LazyLoadContainer {
         Foobar foobar;
 
@@ -107,6 +116,20 @@ public class FoobarTest {
                 @Override
                 public Object loadObject() throws Exception {
                     System.out.println("Start dispatcher!");
+                    return new Foobar();
+                }
+            });
+        }
+    }
+
+    static class ProxyRefDispatcherContainer {
+        Foobar foobar;
+
+        ProxyRefDispatcherContainer() {
+            foobar = (Foobar) Enhancer.create(Foobar.class, new ProxyRefDispatcher() {
+                @Override
+                public Object loadObject(Object proxy) throws Exception {
+                    System.out.printf("Start ProxyRefDispatcher proxy: %s%n!", proxy.getClass());
                     return new Foobar();
                 }
             });
